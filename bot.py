@@ -6,7 +6,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, fil
 from apscheduler.schedulers.background import BackgroundScheduler
 from quotes import quotes, tips
 
-TOKEN = "7564426395:AAEZ__E0SvaRdXr24-gcUtZMtqptU4isWjY"
+TOKEN = "7564426395:AAEgaFj6DyxAqcv6ZuOlxU-8C7WLUgwOQKY"
 USERS_FILE = "users.json"
 
 def load_users():
