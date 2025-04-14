@@ -1,4 +1,4 @@
-
+﻿
 import json
 import random
 from telegram import Update
@@ -6,7 +6,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, fil
 from apscheduler.schedulers.background import BackgroundScheduler
 from quotes import quotes, tips
 
-TOKEN = "YOUR_BOT_TOKEN"
+TOKEN = "7564426395:AAEZ__E0SvaRdXr24-gcUtZMtqptU4isWjY"
 USERS_FILE = "users.json"
 
 def load_users():
@@ -59,3 +59,4 @@ if __name__ == '__main__':
 
     print("✅ Бот іске қосылды...")
     app.run_polling()
+
