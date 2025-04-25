@@ -1,62 +1,48 @@
 ﻿
-import json
-import random
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
-from apscheduler.schedulers.background import BackgroundScheduler
-from quotes import quotes, tips
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+import random
 
-TOKEN = "7564426395:AAEgaFj6DyxAqcv6ZuOlxU-8C7WLUgwOQKY"
-USERS_FILE = "users.json"
+# Расширенный список мотивационных цитат
+quotes = [
+    "Сен мықтысың! Ешқашан берілме!",
+    "Бәрі жақсы болады, тек сеніміңді жоғалтпа.",
+    "Қателік – жетістікке апарар жол!",
+    "Сен жалғыз емессің. Біз бірге бәрін еңсереміз.",
+    "Кішкентай қадам – үлкен жетістікке бастар жол.",
+    "Сенің арманың – сенің күшің.",
+    "Бүгінгі күш – ертеңгі табыстың кілті.",
+    "Әр күн – жаңа мүмкіндік.",
+    "Өзіңе сен, сонда бәрі мүмкін.",
+    "Сен – өз өміріңнің авторы!",
+    "Сенің ойың маңызды. Бөлісуден қорықпа.",
+    "Сенің құның сенің бағаңмен өлшенбейді.",
+    "Бүгін қиын болса да, ертең жарқын болады.",
+    "Ұмытпа: сен ерекше және қайталанбассың!",
+    "Бір сәт тынығып ал — бұл да алға жылжу.",
+    "Жай ғана тыныс ал. Сен бәрін істей аласың.",
+    "Ешкім мінсіз емес, бірақ әркімнің құндылығы бар.",
+    "Сәтсіздік – тек тәжірибе. Жолыңды жалғастыр.",
+    "Мейірімділік пен түсіністік – үлкен күш.",
+    "Сенің болашағың – жарқын және шексіз."
+]
 
-def load_users():
-    try:
-        with open(USERS_FILE, "r") as f:
-            return set(json.load(f))
-    except:
-        return set()
-
-def save_users(users):
-    with open(USERS_FILE, "w") as f:
-        json.dump(list(users), f)
-
-user_ids = load_users()
-
+# Команда /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_ids.add(update.message.chat_id)
-    save_users(user_ids)
     await update.message.reply_text(
-        "Сәлем! Бұл — Сенім бөлмесі 🤗\nМаған өз ойыңды жаза аласың, мен саған мотивация мен қолдау беремін.\n"
-        "/tip командасын қолданып пайдалы кеңес ала аласың."
+        "Сәлем! Бұл бот анонимді түрде саған қолдау көрсетеді. Жай ғана /tips командасын басып, мотивациялық ой ал!"
     )
 
-async def tip(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(f"📌 Кеңес: {random.choice(tips)}")
+# Команда /tips
+async def tips(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(random.choice(quotes))
 
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_ids.add(update.message.chat_id)
-    save_users(user_ids)
-    response = f"Сені түсінемін. Сен жалғыз емессің 💛\n\nЦитата: \"{random.choice(quotes)}\""
-    await update.message.reply_text(response)
+# Запуск приложения
+app = ApplicationBuilder().token("7564426395:AAHVOsUQjG1VoMdhL8Y72Kn7iftzD0DHX74").build()
 
-async def send_daily_quotes(application):
-    for user_id in user_ids:
-        try:
-            await application.bot.send_message(chat_id=user_id, text=f"🌞 Күннің мотивациясы:\n\"{random.choice(quotes)}\"")
-        except Exception as e:
-            print(f"Қате: {e}")
+# Обработчики команд
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("tips", tips))
 
-if __name__ == '__main__':
-    app = ApplicationBuilder().token(TOKEN).build()
-
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("tip", tip))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(send_daily_quotes, trigger='cron', hour=9, minute=0, args=[app])
-    scheduler.start()
-
-    print("✅ Бот іске қосылды...")
-    app.run_polling()
-
+# Запуск бота
+app.run_polling()
