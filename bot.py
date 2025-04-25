@@ -1,48 +1,31 @@
-﻿
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
+from quotes import quotes, tips
 import random
 
-# Расширенный список мотивационных цитат
-quotes = [
-    "Сен мықтысың! Ешқашан берілме!",
-    "Бәрі жақсы болады, тек сеніміңді жоғалтпа.",
-    "Қателік – жетістікке апарар жол!",
-    "Сен жалғыз емессің. Біз бірге бәрін еңсереміз.",
-    "Кішкентай қадам – үлкен жетістікке бастар жол.",
-    "Сенің арманың – сенің күшің.",
-    "Бүгінгі күш – ертеңгі табыстың кілті.",
-    "Әр күн – жаңа мүмкіндік.",
-    "Өзіңе сен, сонда бәрі мүмкін.",
-    "Сен – өз өміріңнің авторы!",
-    "Сенің ойың маңызды. Бөлісуден қорықпа.",
-    "Сенің құның сенің бағаңмен өлшенбейді.",
-    "Бүгін қиын болса да, ертең жарқын болады.",
-    "Ұмытпа: сен ерекше және қайталанбассың!",
-    "Бір сәт тынығып ал — бұл да алға жылжу.",
-    "Жай ғана тыныс ал. Сен бәрін істей аласың.",
-    "Ешкім мінсіз емес, бірақ әркімнің құндылығы бар.",
-    "Сәтсіздік – тек тәжірибе. Жолыңды жалғастыр.",
-    "Мейірімділік пен түсіністік – үлкен күш.",
-    "Сенің болашағың – жарқын және шексіз."
-]
-
-# Команда /start
+# /start командасы
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Сәлем! Бұл бот анонимді түрде саған қолдау көрсетеді. Жай ғана /tips командасын басып, мотивациялық ой ал!"
+        "Сәлем! Бұл бот саған анонимді қолдау көрсетеді.\n"
+        "Өзіңнің ойыңды жаза бер — мен сені қолдаймын.\n"
+        "Егер кеңес керек болса, /tips командасын бас."
     )
 
-# Команда /tips
-async def tips(update: Update, context: ContextTypes.DEFAULT_TYPE):
+# /tips командасы → пайдалы кеңес жібереді
+async def send_tip(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(random.choice(tips))
+
+# Кез келген хабарлама келгенде → мотивация жібереді
+async def respond_to_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(random.choice(quotes))
 
-# Запуск приложения
+# Ботты іске қосу
 app = ApplicationBuilder().token("7564426395:AAHVOsUQjG1VoMdhL8Y72Kn7iftzD0DHX74").build()
 
-# Обработчики команд
+# Командалар мен хабарламалар
 app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("tips", tips))
+app.add_handler(CommandHandler("tips", send_tip))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, respond_to_message))
 
-# Запуск бота
+# Ботты қосу
 app.run_polling()
