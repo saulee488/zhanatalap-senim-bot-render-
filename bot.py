@@ -20,7 +20,7 @@ async def respond_to_message(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await update.message.reply_text(random.choice(quotes))
 
 # Ботты іске қосу
-app = ApplicationBuilder().token("7564426395:AAHVOsUQjG1VoMdhL8Y72Kn7iftzD0DHX74").build()
+app = ApplicationBuilder().token("7564426395:AAFveW8MTIFAatF0FB0Uj4Llln86hWd2KJA").build()
 
 # Командалар мен хабарламалар
 app.add_handler(CommandHandler("start", start))
